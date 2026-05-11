@@ -1,0 +1,69 @@
+#!/bin/sh
+# POSIX terminal launcher (Superset of sd logic)
+# Modified for Hyprland/Wayland.
+
+get_active_window_pid() {
+    # Replaces xdotool/xprop with hyprctl IPC
+    _pid=$(hyprctl activewindow -j | sed -n 's/.*"pid": \([0-9]*\),.*/\1/p')
+    if [ -z "$_pid" ] || [ "$_pid" -eq 0 ]; then
+        return 1
+    fi
+    printf "%s" "$_pid"
+}
+
+get_process_cwd() {
+    _pid="$1"
+    if [ -d "/proc/$_pid/cwd" ]; then
+        readlink -f "/proc/$_pid/cwd"
+    else
+        printf "%s" "$PWD"
+    fi
+}
+
+open_terminal() {
+    _dir="$1"
+    [ ! -d "$_dir" ] && _dir="$PWD"
+    # Priority: $TERMINAL environment variable, fallback to kitty
+    ${TERMINAL:-kitty} --working-directory="$_dir" >/dev/null 2>&1 &
+}
+
+main() {
+    active_pid=$(get_active_window_pid)
+    if [ $? -ne 0 ] || [ -z "$active_pid" ]; then
+        open_terminal "$PWD"
+        exit 0
+    fi
+
+    # Generate process tree list, most recent first (tac)
+    pid_list=$(pstree -lpATna "$active_pid" | sed -En 's/.*,([0-9]+).*/\1/p' | tac)
+
+    target_pid=""
+    for pid in $pid_list; do
+        cmdline=$(ps -o args= -p "$pid" 2>/dev/null)
+        cwd=$(get_process_cwd "$pid")
+
+        case "$cmdline" in
+            'yazi'*|'lf'*) 
+                target_pid="$pid"
+                break 
+                ;;
+            *"$SHELL"*) 
+                target_pid="$pid"
+                break 
+                ;;
+        esac
+
+        if [ "$cwd" != "$HOME" ] && [ "$cwd" != '/' ]; then
+            target_pid="$pid"
+            break
+        fi
+    done
+
+    if [ -n "$target_pid" ]; then
+        open_terminal "$(get_process_cwd "$target_pid")"
+    else
+        open_terminal "$PWD"
+    fi
+}
+
+main

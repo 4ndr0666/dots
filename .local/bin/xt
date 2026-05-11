@@ -1,0 +1,50 @@
+#!/bin/sh
+# POSIX compliant extraction engine (Superset of lfrc extract logic)
+# Corrected: Includes .Z and Auto-CD logic for all lfrc formats.
+
+if [ $# -eq 0 ]; then
+    printf "Usage: xt <file1> [file2] ...\n" >&2
+    exit 1
+fi
+
+for file in "$@"; do
+    if [ ! -f "$file" ]; then
+        printf "xt: '%s' is not a valid file.\n" "$file" >&2
+        continue
+    fi
+
+    low_file=$(printf '%s' "$file" | tr '[:upper:]' '[:lower:]')
+
+    # Determine directory name for Auto-CD logic
+    case "$low_file" in
+        *.tar.lrz|*.tar.bz2|*.tar.gz|*.tar.xz|*.tar.zst|*.tar.lz4) base_dir="${file%.tar.*}" ;;
+        *.tbz2|*.tgz) base_dir="${file%.t*}" ;;
+        *) base_dir="${file%.*}" ;;
+    esac
+
+    printf "--> Extracting '%s'...\n" "$file"
+
+    case "$low_file" in
+        *.tar.lrz) lrztar -d "$file" ;;
+        *.lrz) lrunzip "$file" ;;
+        *.tar.bz2|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.tar.zst|*.tar.lz4|*.tar) tar -xf "$file" ;;
+        *.zip|*.jar|*.exe) unzip -qq "$file" ;;
+        *.rar) unrar x "$file" ;;
+        *.7z) 7z x "$file" ;;
+        *.bz2) bunzip2 "$file" ;;
+        *.gz|*.ipk) gunzip "$file" ;;
+        *.z) uncompress "$file" ;;
+        *.deb) ar x "$file" ;;
+        *.rpm) rpmextract.sh "$file" ;;
+        *.xz) unxz "$file" ;;
+        *.zst) unzstd "$file" ;;
+        *) printf "xt: Unknown format: '%s'\n" "$file" >&2; continue ;;
+    esac
+
+    if [ $? -eq 0 ]; then
+        printf "--> Successfully extracted '%s'.\n" "$file"
+        if [ $# -eq 1 ] && [ -d "$base_dir" ]; then
+            [ -n "$YAZI_ID" ] && ya emit cd "$PWD/$base_dir" || cd "$base_dir"
+        fi
+    fi
+done

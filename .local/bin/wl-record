@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+# Author: 4ndr0666
+# ================= // WL-RECORD //
+# Literal POSIX/Bash Superset of dmenurecord with Hyprland IPC integration.
+
+updateicon() {
+    if [[ -n "$1" ]]; then
+        echo "$1" > /tmp/recordingicon
+    else
+        echo "" > /tmp/recordingicon
+    fi
+    pkill -SIGUSR1 waybar &>/dev/null || true
+}
+
+killrecording() {
+    if [[ ! -f /tmp/recordingpid ]]; then
+        notify-send "No active recording to stop."
+        return
+    fi
+    local recpid=$(cat /tmp/recordingpid)
+    if ps -p "$recpid" > /dev/null; then
+        # Graceful shutdown (SIGINT) for wf-recorder file finalization.
+        kill -INT "$recpid"
+        notify-send "Recording stopped."
+    else
+        notify-send "Recording process not found. Cleaning up stale PID."
+    fi
+    rm -f /tmp/recordingpid
+    updateicon ""
+}
+
+select_monitor() {
+    # Pull monitor list from Hyprland IPC.
+    local choice=$(hyprctl monitors -j | jq -r '.[] | .name' | wofi --dmenu --prompt "Select Monitor:")
+    [[ -z "$choice" ]] && echo "cancelled" || echo "$choice"
+}
+
+screencast() {
+    notify-send "Recording started" "Full screencast with audio."
+    # Wayland migration: ffmpeg x11grab -> wf-recorder --audio support.
+    local cmd="wf-recorder --audio --no-damage --codec libx264 -p qp=0 -f '$HOME/screencast-$(date '+%y%m%d-%H%M-%S').mp4'"
+    setsid -f sh -c "$cmd" >/dev/null 2>&1
+    sleep 0.5
+    pgrep -f "wf-recorder.*screencast" > /tmp/recordingpid
+    updateicon "⏺️🎙️"
+}
+
+video() {
+    notify-send "Recording started" "Recording video."
+    local output=$(select_monitor)
+    [[ "$output" == "cancelled" ]] && { notify-send "Recording cancelled."; return; }
+    local cmd="wf-recorder -o '$output' --no-damage --framerate 60 --codec libx264 -p qp=0 -f '$HOME/video-$(date '+%y%m%d-%H%M-%S').mp4'"
+    setsid -f sh -c "$cmd" >/dev/null 2>&1
+    sleep 0.5
+    pgrep -f "wf-recorder.*video" > /tmp/recordingpid
+    updateicon "⏺️"
+}
+
+videoselected() {
+    local geometry=$(slurp) || { notify-send "Selection cancelled."; return; }
+    notify-send "Recording started" "Recording selected region."
+    local cmd="wf-recorder -g '$geometry' --no-damage --framerate 60 --codec libx264 -p qp=0 -f '$HOME/box-$(date '+%y%m%d-%H%M-%S').mp4'"
+    setsid -f sh -c "$cmd" >/dev/null 2>&1
+    sleep 0.5
+    pgrep -f "wf-recorder.*box" > /tmp/recordingpid
+    updateicon "⏺️"
+}
+
+# Pure FFmpeg functions restoration for webcam and audio-only recording.
+webcamhidef() { 
+    ffmpeg -f v4l2 -i /dev/video0 -video_size 1920x1080 "$HOME/webcam-$(date '+%y%m%d-%H%M-%S').mkv" &
+    echo $! > /tmp/recordingpid; updateicon "🎥"
+}
+
+webcam() { 
+    ffmpeg -f v4l2 -i /dev/video0 -video_size 640x480 "$HOME/webcam-$(date '+%y%m%d-%H%M-%S').mkv" &
+    echo $! > /tmp/recordingpid; updateicon "🎥"
+}
+
+audio() { 
+    ffmpeg -f alsa -i default -c:a flac "$HOME/audio-$(date '+%y%m%d-%H%M-%S').flac" &
+    echo $! > /tmp/recordingpid; updateicon "🎙️"
+}
+
+askrecording() {
+    local choice=$(printf "screencast\nvideo\nvideo selected\naudio\nwebcam\nwebcam (hi-def)" | wofi --dmenu --prompt "Select recording style:")
+    case "$choice" in
+        screencast) screencast ;;
+        audio) audio ;;
+        video) video ;;
+        "video selected") videoselected ;;
+        webcam) webcam ;;
+        "webcam (hi-def)") webcamhidef ;;
+    esac
+}
+
+asktoend() {
+    local response=$(printf "No\nYes" | wofi --dmenu --prompt "Recording active. End recording?")
+    [[ "$response" == "Yes" ]] && killrecording
+}
+
+case "$1" in
+    screencast) screencast ;;
+    audio) audio ;;
+    video) video ;;
+    *selected) videoselected ;;
+    kill) killrecording ;;
+    *) ([ -f /tmp/recordingpid ] && asktoend && exit) || askrecording ;;
+esac

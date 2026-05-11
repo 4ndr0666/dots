@@ -1,0 +1,263 @@
+# KEYS: Micro
+
+## Default keybindings:
+
+**“Key”: “Action”**
+
+* "Up": "CursorUp"
+* "Down": "CursorDown"
+* "Right": "CursorRight"
+* "Left": "CursorLeft"
+* "ShiftUp": "SelectUp"
+* "ShiftDown": "SelectDown"
+* "ShiftLeft": "SelectLeft"
+* "ShiftRight": "SelectRight"
+* "AltUp": "MoveLinesUp"
+* "AltDown": "MoveLinesDown"
+* "CtrlShiftRight": "SelectWordRight"
+* "CtrlShiftLeft": "SelectWordLeft"
+* "AltLeft": "StartOfTextToggle"
+* "AltRight": "EndOfLine"
+* "AltShiftLeft": "SelectToStartOfTextToggle"
+* "ShiftHome": "SelectToStartOfTextToggle"
+* "AltShiftRight": "SelectToEndOfLine"
+* "ShiftEnd": "SelectToEndOfLine"
+* "CtrlUp": "CursorStart"
+* "CtrlDown": "CursorEnd"
+* "CtrlShiftUp": "SelectToStart"
+* "CtrlShiftDown": "SelectToEnd"
+* "Alt-{": "ParagraphPrevious"
+* "Alt-}": "ParagraphNext"
+* "Enter": "InsertNewline"
+* "Ctrl-h": "Backspace"
+* "Backspace": "Backspace"
+* "Alt-CtrlH": "DeleteWordLeft"
+* "Alt-Backspace": "DeleteWordLeft"
+* "Tab": "Autocomplete|IndentSelection|InsertTab"
+* "Backtab": "OutdentSelection|OutdentLine"
+* "Ctrl-o": "OpenFile"
+* "Ctrl-s": "Save"
+* "Ctrl-f": "Find"
+* "Ctrl-n": "FindNext"
+* "Ctrl-p": "FindPrevious"
+* "Ctrl-z": "Undo"
+* "Ctrl-y": "Redo"
+* "Ctrl-c": "CopyLine|Copy"
+* "Ctrl-x": "Cut"
+* "Ctrl-k": "CutLine"
+* "Ctrl-d": "DuplicateLine"
+* "Ctrl-v": "Paste"
+* "Ctrl-a": "SelectAll"
+* "Ctrl-t": "AddTab"
+* "Alt-,": "PreviousTab"
+* "Alt-.": "NextTab"
+* "Home": "StartOfText"
+* "End": "EndOfLine"
+* "CtrlHome": "CursorStart"
+* "CtrlEnd": "CursorEnd"
+* "PageUp": "CursorPageUp"
+* "PageDown": "CursorPageDown"
+* "CtrlPageUp": "PreviousTab"
+* "CtrlPageDown": "NextTab"
+* "Ctrl-g": "ToggleHelp"
+* "Alt-g": "ToggleKeyMenu"
+* "Ctrl-r": "ToggleRuler"
+* "Ctrl-l": "command-edit:goto"
+* "Delete": "Delete"
+* "Ctrl-b": "ShellMode"
+* "Ctrl-q": "Quit"
+* "Ctrl-e": "CommandMode"
+* "Ctrl-w": "NextSplit"
+* "Ctrl-u": "ToggleMacro"
+* "Ctrl-j": "PlayMacro"
+* "Insert": "ToggleOverwriteMode"
+* "MouseWheelUp": "ScrollUp"
+* "MouseWheelDown": "ScrollDown"
+* "MouseLeft": "MousePress"
+* "MouseMiddle": "PastePrimary"
+* "Ctrl-MouseLeft": "MouseMultiCursor"
+
+---
+
+## General Commands
+
+- **Open Command Bar:** `Ctrl+E`  
+- **Toggle Cheat Sheet:** `Alt+G`  
+- **View Default Keybindings:** Type `help defaultkeys`  
+- **List Available Commands:** Type `help commands`  
+- **Auto-complete Commands:** Press `Tab`  
+- **Filter Commands:** Type letters then press `Tab`  
+
+- **Save File:**  
+  - Default save: `Ctrl+S`  
+  - Save As: `save [filename]` *(if no filename is provided, it defaults to saving the current file)*
+
+- **Splitting & Tabs:**  
+  - **Vertical Split:** `vsplit [filename]`  
+  - **Horizontal Split:** `hsplit [filename]`  
+  - **Open New Tab:** `tab [filename]`
+
+- **Go To Line:** `goto <line_number>`  
+  *(You can use negative numbers to count from the end.)*
+
+- **Open Terminal:** `term [command]`  
+  *(Omit `[command]` to open your default shell.)*
+
+- **Replace All:** `replaceall foo bar`  
+- **Replace (with flags):** `replace foo bar [flags]`  
+  - **Flags:**  
+    - `-a`: Replace all occurrences  
+    - `-l`: Literal search (no regex)
+
+---
+
+## Options
+
+### Runtime Commands
+
+- **Set Option Permanently:**  
+  ```plaintext
+  set [option] [value]
+  ```
+- **Set Option Temporarily:**  
+  ```plaintext
+  setlocal [option] [value]
+  ```
+- **Show Option Value:**  
+  ```plaintext
+  show [option]
+  ```
+
+### Persistent Settings via settings.json
+
+Edit `~/.config/micro/settings.json` for permanent changes. For example, to disable the ruler:
+```json
+{
+    "ruler": false
+}
+```
+
+### Common Option Values
+
+- **Auto Indentation:** `autoindent true`
+- **Autosave Interval:** `autosave=X` *(set to 0 to disable)*
+- **Elevate with sudo if needed:** `autosu`
+- **Backup Open Buffers:** `backup true`
+- **Clipboard Mode:** `clipboard external | terminal | internal`
+- **Highlight Search Matches:** `hlsearch`
+- **Insert Newline at EOF:** `eofnewline true`
+- **Brace Matching:** `matchbrace true`
+- **Show Line Numbers (Ruler):** `ruler true`
+- **Soft Wrap Lines:** `softwrap true` or `softwrap false`
+- **Word Wrap:** `wordwrap true` or `wordwrap false` *(requires softwrap enabled)*
+
+---
+
+## Plugins
+
+### Plugin Commands
+
+- **List Installed Plugins:**  
+  ```plaintext
+  plugin list
+  ```
+- **Install a Plugin:**  
+  ```plaintext
+  plugin install [plugin]
+  ```
+- **Remove a Plugin:**  
+  ```plaintext
+  plugin remove [plugin]
+  ```
+- **Update a Plugin:**  
+  ```plaintext
+  plugin update [plugin]
+  ```
+- **Update All Plugins:**  
+  ```plaintext
+  plugin update
+  ```
+- **Search for Plugins:**  
+  ```plaintext
+  plugin search 'keyword'
+  ```
+- **Show Available Plugins:**  
+  ```plaintext
+  plugin available
+  ```
+
+### Popular Plugins
+
+- **autoclose:** Automatically adds closing brackets/quotes.  
+- **comment:** Toggle commenting for lines.  
+- **diff:** Shows differences from the latest Git commit.  
+- **ftoptions:** Filetype-specific options (like indentation settings).  
+- **linter:** Provides language linting support.  
+- **literate:** Enhanced syntax highlighting for literate programming.  
+- **status:** Displays an extended status line.
+
+---
+
+## Keybindings
+
+### Binding Custom Keys
+
+- **Set a Custom Keybinding:**  
+  ```plaintext
+  bind [keycombo] [action]
+  ```
+  *Example:*  
+  ```plaintext
+  bind Ctrl+S save
+  ```
+
+- **Mouse Bindings:**  
+  ```plaintext
+  bind CtrlMouseLeft SelectLine
+  ```
+
+- **Bind a Key Sequence:**  
+  ```plaintext
+  bind "<Ctrl-J><Ctrl-B>" JumpToMatchingBrace
+  ```
+
+### Chaining Commands
+
+- **Example for Toggling Wordwrap:**  
+  ```plaintext
+  bind "command:setlocal wordwrap on,command:setlocal softwrap on" Alt+z
+  bind "command:setlocal wordwrap off,command:setlocal softwrap off" Alt+Z
+  ```
+
+---
+
+## Multi-Cursor Support
+
+*Micro supports multi-cursor editing (often via plugins or built-in features in recent versions):*
+
+- **Add New Cursor from Selection:** `Alt+n`
+- **Add Cursor Above:** `Alt+Shift+Up`
+- **Add Cursor Below:** `Alt+Shift+Down`
+- **Remove Latest Cursor:** `Alt+p`
+- **Clear All Cursors:** `Alt+c`
+- **Skip Current Selection:** `Alt+x`
+- **Set Cursors on Each Line in Selection:** `Alt+m`
+- **Place Cursor Anywhere:** `Ctrl+MouseLeft` *(drag to select, double-click for word, triple-click for line)*
+
+---
+
+## Reloading Micro
+
+- **Reload Configuration:**  
+  In the command bar, type:  
+  ```plaintext
+  reload
+  ```  
+  *(This refreshes settings and plugins without restarting Micro.)*
+
+---
+
+## Resources
+
+- **Micro Text Editor on GitHub:** [Micro on GitHub](https://github.com/zyedidia/micro)  
+- **Official Documentation:** [Micro Documentation](https://micro-editor.github.io/)

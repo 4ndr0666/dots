@@ -1,0 +1,132 @@
+# KEYS: sed
+
+## Basic Syntax
+
+```bash
+sed [options] 'command' file
+```
+
+---
+
+## Common Operations
+
+### 1. Printing Lines
+* **Print a specific line:**
+  ```bash
+  sed -n '213p' document.sh
+  ```
+  *The `-n` flag suppresses automatic printing, while `p` forces the printing of the specific line.*
+
+* **Print a range of lines:**
+  ```bash
+  sed -n '10,20p' document.sh
+  ```
+
+* **Print everything except a range:**
+  ```bash
+  sed '10,20d' document.sh
+  ```
+
+---
+
+## Substitution (Find and Replace)
+
+### 2. Basic Substitution
+* **Replace the first occurrence per line:**
+  ```bash
+  sed 's/old_word/new_word/' file.txt
+  ```
+
+* **Replace all occurrences (Global):**
+  ```bash
+  sed 's/old_word/new_word/g' file.txt
+  ```
+
+* **Replace on a specific line only:**
+  ```bash
+  sed '5s/old/new/' file.txt
+  ```
+
+* **Case-insensitive substitution:**
+  ```bash
+  sed 's/old/new/gI' file.txt
+  ```
+
+---
+
+## Deleting Content
+
+### 3. Deleting Lines
+* **Delete a specific line:**
+  ```bash
+  sed '5d' file.txt
+  ```
+
+* **Delete the last line:**
+  ```bash
+  sed '$d' file.txt
+  ```
+
+* **Delete lines matching a pattern:**
+  ```bash
+  sed '/pattern/d' file.txt
+  ```
+
+* **Delete empty lines:**
+  ```bash
+  sed '/^$/d' file.txt
+  ```
+
+---
+
+## Advanced Editing
+
+### 4. In-place Editing
+To save changes directly back to the file (use with caution), use the `-i` flag:
+```bash
+sed -i 's/search/replace/g' file.txt
+```
+*On macOS/BSD, you may need an empty string extension: `sed -i '' 's/s/r/g' file`.*
+
+### 5. Multiple Commands
+* **Using semicolons:**
+  ```bash
+  sed 's/red/blue/g; s/green/yellow/g' file.txt
+  ```
+
+* **Using the -e flag:**
+  ```bash
+  sed -e 's/a/b/' -e 's/c/d/' file.txt
+  ```
+
+---
+
+## Option Reference Table
+
+| Option | Description |
+| :--- | :--- |
+| `-n` | Quiet mode; only print what is specified with `p` |
+| `-i` | Edit files in-place (save changes to disk) |
+| `-e` | Append multiple editing commands |
+| `-f` | Add commands from a script file |
+| `-E` | Use extended regular expressions (ERE) |
+
+---
+
+## Regex Reference
+
+| Metacharacter | Description |
+| :--- | :--- |
+| `^` | Matches the beginning of a line |
+| `$` | Matches the end of a line |
+| `.` | Matches any single character |
+| `*` | Matches zero or more occurrences of the previous character |
+| `[ ]` | Matches any character within the brackets |
+
+---
+
+## Resources
+
+* **GNU Sed Manual:** [gnu.org/software/sed/manual](https://www.gnu.org/software/sed/manual/sed.html)
+* **Sed - An Introduction and Tutorial:** [grymoire.com/Unix/Sed.html](https://www.grymoire.com/Unix/Sed.html)
+* **Man Pages:** `man sed`

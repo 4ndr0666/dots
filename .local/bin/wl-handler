@@ -1,0 +1,29 @@
+#!/bin/sh
+# Universal Wayland Dispatcher (Superset of lfrc open logic)
+# Includes specific handling for spreadsheets and specialized fallbacks.
+
+menu_call() {
+    wofi --dmenu --prompt "$1" --width 500 --lines 15
+}
+
+[ -n "$1" ] && feed="$1" || feed=$(wl-paste 2>/dev/null || menu_call "Input:")
+[ -z "$feed" ] && exit 1
+
+options="copy url\nytf\nswayimg\nsetbg\nPDF\nbrowser\nlynx\nvim\nmpv\nmpv loop\nmpv float\nqueue download\nqueue yt-dlp"
+
+choice=$(printf "%b" "$options" | menu_call "Open with:")
+
+case "$choice" in
+    "copy url") printf "%s" "$feed" | wl-copy ;;
+    ytf) kitty -e zsh -ic "ytf '$feed'; read" ;;
+    swayimg) swayimg -s real "$feed" >/dev/null 2>&1 & ;;
+    setbg) curl -L "$feed" > "$HOME/.cache/pic" && setbg "$HOME/.cache/pic" ;;
+    PDF) f="/tmp/$(printf '%s' "$feed" | sed 's|.*/||;s/%20/ /g')"; curl -sL "$feed" > "$f" && zathura "$f" & ;;
+    browser) "$BROWSER" "$feed" & ;;
+    lynx) kitty -e lynx "$feed" ;;
+    vim) f="/tmp/$(printf '%s' "$feed" | sed 's|.*/||;s/%20/ /g')"; curl -sL "$feed" > "$f" && kitty -e "$EDITOR" "$f" ;;
+    mpv) mpv --quiet "$feed" & ;;
+    "mpv loop") mpv --quiet --loop "$feed" & ;;
+    "mpv float") kitty -e mpv --geometry=+0-0 --autofit=30% --title="mpvfloat" "$feed" & ;;
+    "queue download") qndl "$feed" 'curl -LO' & ;;
+esac

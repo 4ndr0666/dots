@@ -1,0 +1,65 @@
+# KEYS: zathura
+
+## Basic Movement
+
+- **h / j / k / l**: Move left / down / up / right in document
+- **d / u**: Scroll down / up a half page
+- **gg**: Go to the top of the document
+- **G**: Go to the bottom of the document
+- **f**: Highlight URLs to follow (follow mode)
+
+---
+
+## Zooming and View
+
+- **J / K**: Zoom out / in
+- **s**: Zoom to fit width
+- **a**: Zoom to fit height
+- **D**: Toggle dual-page mode
+- **R**: Rotate document clockwise
+
+---
+
+## File Operations
+
+- **r**: Reload document if changed
+- **p**: Print document
+- **o**: Open a new document
+- **f**: Search for text in the document
+- **q**: Quit zathura
+
+---
+
+## Command Mode (Ex Commands)
+
+- **:open <path>**: Open a file from the specified path
+- **:write <path>**: Save the current document to a new path
+- **:export <path>**: Export the current document (e.g., to an image)
+- **:set <option>**: Change settings dynamically (e.g., `:set statusbar-hiding true`)
+- **:help**: Open the manual page
+
+---
+
+## Configuration Example
+
+Zathura settings are typically stored in `~/.config/zathura/zathurarc`.
+
+```conf
+set selection-clipboard clipboard
+set statusbar-hiding true
+set guioptions none
+
+# Custom Colors
+set completion-bg "#1d2021"
+set completion-fg "#ebdbb2"
+set statusbar-bg "#1d2021"
+set statusbar-fg "#ebdbb2"
+```
+
+---
+
+## Resources
+
+- **Official Website**: [pwmt.org](https://pwmt.org/projects/zathura/)
+- **Documentation**: [zathura Man Page](https://pwmt.org/projects/zathura/documentation/)
+- **GitHub Repository**: [zathura on GitHub](https://github.com/pwmt/zathura)

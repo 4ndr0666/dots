@@ -1,0 +1,87 @@
+# KEYS: lite-xl
+
+## Navigation & Core Editing
+
+| Category | Keybinding | Action |
+| :--- | :--- | :--- |
+| **Navigation** | `Arrow Keys` | Move cursor |
+| | `Page Up` / `Page Down` | Scroll page |
+| | `Ctrl + G` | Go to line |
+| **Editing** | `Ctrl + C` | Copy |
+| | `Ctrl + X` | Cut |
+| | `Ctrl + V` | Paste |
+| | `Ctrl + Z` | Undo |
+| | `Ctrl + Y` | Redo |
+| **Search** | `Ctrl + F` | Find |
+| | `F3` | Find next |
+| | `Ctrl + H` | Replace |
+| **File** | `Ctrl + S` | Save |
+| | `Ctrl + Shift + S` | Save As |
+| | `Ctrl + Q` | Quit |
+
+---
+
+## Command Mode Configuration
+
+Access the command prompt by pressing `Alt + Enter` (or `Ctrl + Shift + P` depending on your version/plugins) and enter the following commands:
+
+### Visual Settings
+* **Colorscheme:** `set colorscheme <name>`
+* **Theme:** `set theme <name>`
+* **Font Size:** `set font_size <size>`
+* **Line Numbers:** `set show_line_numbers true/false`
+* **Sidebar:** `set show_sidebar true/false`
+* **Status Bar:** `set show_status_bar true/false`
+* **Toolbar:** `set show_toolbar true/false`
+* **Scrollbar:** `set show_scrollbar true/false`
+
+### Editor Behavior
+* **Tab Size:** `set tab_size <size>`
+* **Indentation Style:** `set indent_style spaces/tabs`
+* **Auto Indent:** `set auto_indent true/false`
+* **Line Height:** `set line_height <height>`
+* **Cursor Style:** `set cursor_style block/line/underline`
+* **Bracket Matching:** `set bracket_matching true/false`
+* **Highlight Line:** `set highlight_current_line true/false`
+
+### Text Handling
+* **Line Wrapping:** `set line_wrap true/false`
+* **Word Wrap:** `set word_wrap true/false`
+* **Spell Check:** `set spell_check true/false`
+* **Syntax:** `set syntax <language>` (Forces specific language highlighting)
+
+---
+
+## Customization
+
+### Change Keybindings
+```text
+set key <key_combination> <command>
+```
+*Maps a specific key combination to an internal command.*
+
+---
+
+## Quick Reference Table
+
+| Command | Description |
+| :--- | :--- |
+| `set colorscheme <name>` | Change colorscheme |
+| `set font_size <size>` | Adjust font size |
+| `set show_line_numbers true/false` | Toggle line numbers |
+| `set theme <name>` | Change editor theme |
+| `set tab_size <size>` | Set tab size |
+| `set auto_indent true/false` | Enable/Disable auto indentation |
+| `set line_wrap true/false` | Enable/Disable line wrapping |
+| `set spell_check true/false` | Enable/Disable spell checking |
+| `set word_wrap true/false` | Toggle word wrap |
+| `set bracket_matching true/false` | Toggle bracket matching |
+| `set show_toolbar true/false` | Show or hide toolbar |
+
+---
+
+## Resources
+
+* **GitHub Repository:** [lite-xl/lite-xl](https://github.com/lite-xl/lite-xl)
+* **Documentation:** [Lite XL Wiki](https://github.com/lite-xl/lite-xl/wiki)
+* **Plugins:** [lite-xl-plugins](https://github.com/lite-xl/lite-xl-plugins)

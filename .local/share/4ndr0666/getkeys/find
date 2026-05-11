@@ -1,0 +1,122 @@
+# KEYS: find
+
+## Most Common Usage
+```bash
+find . -type f -iname '*.mp4'
+```
+*Recursively searches the current directory (`.`) for files (`-type f`) with a case-insensitive name (`-iname`) ending in `.mp4`.*
+
+---
+
+## Searching Basics
+
+### Search by Name (Case-Sensitive)
+```bash
+find /path -name "filename.txt"
+```
+
+### Search by Name (Case-Insensitive)
+```bash
+find /path -iname "filename.txt"
+```
+
+### Search by Type
+```bash
+find . -type d -name "config"   # Search for directories only
+find . -type f -name "config"   # Search for files only
+find . -type l -name "link"     # Search for symbolic links
+```
+
+### Search by File Size
+```bash
+find . -size +100M    # Files larger than 100MB
+find . -size -10k     # Files smaller than 10KB
+find . -size 50M      # Files exactly 50MB
+```
+
+---
+
+## Time-Based Searching
+
+### Based on Modification Time (mtime)
+```bash
+find . -mtime -1      # Files modified within the last 24 hours
+find . -mtime +30     # Files modified more than 30 days ago
+```
+
+### Based on Access Time (atime)
+```bash
+find . -atime -7      # Files accessed within the last 7 days
+```
+
+---
+
+## Executing Commands
+
+### Remove Files with Specific Word
+```bash
+find . -name '*example*' -exec rm -v {} +
+```
+*Finds matches and executes `rm -v` on the results. The `{}` is a placeholder for the results, and `+` groups arguments for efficiency.*
+
+### Change Permissions
+```bash
+find . -type d -exec chmod 755 {} +
+find . -type f -exec chmod 644 {} +
+```
+
+### Interactive Deletion
+```bash
+find . -name "*.log" -ok rm {} \;
+```
+*Uses `-ok` instead of `-exec` to prompt for confirmation before every action.*
+
+---
+
+## Advanced Filtering
+
+### Search for Empty Files/Directories
+```bash
+find . -empty
+```
+
+### Search by Permissions
+```bash
+find . -perm 777
+```
+
+### Search Multiple Patterns (OR Logic)
+```bash
+find . \( -name "*.sh" -o -name "*.bash" \)
+```
+
+### Limit Search Depth
+```bash
+find . -maxdepth 1 -name "*.txt"
+```
+*Prevents `find` from descending into subdirectories.*
+
+---
+
+## Option Reference Table
+
+| Option | Description |
+| :--- | :--- |
+| `-name` | Search by filename (case-sensitive) |
+| `-iname` | Search by filename (case-insensitive) |
+| `-type` | Filter by type (`f`=file, `d`=directory, `l`=link) |
+| `-size` | Filter by size (`k`, `M`, `G`) |
+| `-mtime` | Days since last modification |
+| `-atime` | Days since last access |
+| `-user` | Search for files owned by a specific user |
+| `-perm` | Search for files with specific permissions |
+| `-exec` | Run a command on search results |
+| `-delete` | Directly delete found files (use with caution) |
+
+---
+
+## Resources
+
+* **GNU Findutils:** [gnu.org/software/findutils/](https://www.gnu.org/software/findutils/)
+* **Man Pages:** `man find`
+* **Explainshell:** [explainshell.com](https://explainshell.com)

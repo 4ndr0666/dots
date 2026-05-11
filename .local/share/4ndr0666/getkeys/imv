@@ -1,0 +1,64 @@
+# KEYS: imv
+>cli image viewer.
+
+## Navigation & File Control
+
+| Key | Action |
+| :--- | :--- |
+| **q** | Quit imv |
+| **Left / n / p** | Previous image |
+| **Right / Space** | Next image |
+| **gg** | Go to first image |
+| **G** | Go to last image |
+| **x** | Close current image |
+| **f** | Toggle fullscreen |
+| **d** | Toggle overlay (info/metadata) |
+| **p** | Print current image path to stdout |
+
+---
+
+## Panning & Zooming
+
+### Panning (Movement)
+* **h** - Pan left
+* **j** - Pan down
+* **k** - Pan up
+* **l** - Pan right
+
+### Zooming
+* **Up / i / +** - Zoom in
+* **Down / o / -** - Zoom out
+* **a** - Zoom to actual size (1:1)
+* **r** - Reset zoom and pan to default
+
+---
+
+## Image Manipulation & View Modes
+
+### Orientation
+* **Ctrl+r** - Rotate clockwise by 90°
+
+### Scaling & Placement
+* **c** - Center image in window
+* **s** - Cycle through scaling modes (Fixed, Fit, Fill)
+* **S** - Cycle through upscaling modes
+
+---
+
+## Animations & Slideshows
+
+### Animations (GIF/WebP)
+* **.** - Next frame
+* **Space** - Toggle Play/Pause
+
+### Slideshow Mode
+* **t** - Start slideshow / Increase delay by 1 second
+* **T** - Stop slideshow / Decrease delay by 1 second
+
+---
+
+## Resources
+
+* **imv GitHub Repository:** [eexilee/imv](https://github.com/eexilee/imv)
+* **Man Pages:** `man imv`
+* **Configuration:** Usually found at `~/.config/imv/config`

@@ -1,0 +1,56 @@
+# KEYS: ncmpcpp
+
+## Navigation & Movement
+
+| Key | Action |
+| :--- | :--- |
+| **h / j / k / l** | Move Left / Down / Up / Right |
+| **d / u** | Page Down / Page Up |
+| **g** | Go to top of list |
+| **G** | Go to bottom of list |
+| **Enter** | Play selected song |
+
+---
+
+## Playback & Playlist Management
+
+| Key | Action |
+| :--- | :--- |
+| **p** | Pause / Resume playback |
+| **a** | Add selected song(s) to current playlist |
+| **c** | Clear the current playlist |
+| **S** | Stop playback |
+| **> / <** | Next / Previous track |
+| **f / b** | Seek Forward / Backward |
+
+---
+
+## View Modes (The "Screens")
+
+`ncmpcpp` uses numbered screens or specific keys to toggle different interface views:
+
+* **P** - **Playlist**: View and manage the current queue.
+* **m** - **Media Library**: Browse your music collection by metadata (Artist/Album).
+* **f** - **File Browser**: Browse music based on your directory structure.
+* **s** - **Search Engine**: Search for specific tracks, artists, or albums.
+* **t** - **Tag Editor**: Edit metadata tags for the selected files.
+* **v** - **Visualizer**: Display audio spectrum visualizations.
+* **l** - **Lyrics**: Fetch and view lyrics for the current song.
+
+---
+
+## Advanced Controls
+
+* **#** - Toggle bitrates and statistics.
+* **r** - Toggle Repeat mode.
+* **z** - Toggle Shuffle (Random) mode.
+* **y** - Toggle Single mode.
+* **C** - Toggle Consume mode (removes song from playlist after playing).
+
+---
+
+## Resources
+
+* **ncmpcpp GitHub Repository:** [ncmpcpp/ncmpcpp](https://github.com/ncmpcpp/ncmpcpp)
+* **Official Documentation:** [ncmpcpp.rybczak.net](https://ncmpcpp.rybczak.net/)
+* **Man Pages:** `man ncmpcpp`

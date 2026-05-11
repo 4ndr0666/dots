@@ -1,0 +1,139 @@
+# KEYS: rsync
+
+## Core Operations
+
+### Basic Copy
+Copies all files (recursively) from source to destination, preserving attributes:
+```bash
+rsync -av source_dir/ dest_dir/
+```
+
+### "Move" Files from Src to Dest
+Copies files and then removes them from the source. (Empty directories are removed separately.)
+```bash
+rsync -av --remove-source-files --progress tempdesk/ /sto2 && find tempdesk -type d -empty -delete
+```
+
+### Sync Metadata-Only
+Copies only file metadata (ownerships, permissions, ACLs) without overwriting file contents.  
+*The `--no-W` option disallows overwriting of files.*
+```bash
+sudo rsync -aAXv --progress --no-W --omit-dir-times --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} / /mnt/target_root
+```
+
+---
+
+## Advanced Synchronization Logic
+
+### Selective Merge (Skip Existing)
+Copies all files from source to destination while skipping files that already exist.
+```bash
+rsync -av --ignore-existing --update --progress /source/dir/ dest_dir/
+```
+* `--ignore-existing`: Do not update files that already exist in the destination.
+* `--update` (`-u`): Copy a file only if the source file is newer than the destination’s.
+
+### Merge Based on Size Only
+Copies files while removing them from the source, using file size differences as the only check:
+```bash
+rsync -a --remove-source-files --progress --size-only source_dir/ dest_dir/
+```
+
+### Exact Mirror (Delete Extraneous)
+Creates an exact mirror of the source by deleting files in the destination that no longer exist in the source:
+```bash
+rsync -av --delete source_dir/ dest_dir/
+```
+
+---
+
+## Transfer Management
+
+### SSH Transfer
+Copies files over SSH:
+```bash
+rsync -av -e ssh source_dir/ user@hostname:/path/to/dest_dir/
+```
+
+### Compression & Bandwidth
+* **Compress:** `-z` compresses data during transfer.
+* **Limit Bandwidth:** `--bwlimit=2000` (value in KB/s).
+```bash
+rsync -avz --bwlimit=2000 source_dir/ dest_dir/
+```
+
+### Dry Run (Preview)
+Performs a trial run with no changes made:
+```bash
+rsync -avn source_dir/ dest_dir/
+```
+
+---
+
+## Filters & Includes/Excludes
+
+### Sync Specified File Types Only (e.g., `.jpg`)
+```bash
+rsync -av --include '*/' --include '*.jpg' --exclude '*' source_dir/ dest_dir/
+```
+
+### Exclude Patterns
+```bash
+rsync -av --exclude '*.jpg' source_dir/ dest_dir/
+```
+
+### Exclude Patterns from a File
+```bash
+rsync -av --exclude-from 'exclude-patterns.txt' source_dir/ dest_dir/
+```
+
+---
+
+## Critical Syntax & Pitfalls
+
+### The Trailing Slash Rule
+The presence or absence of a `/` on the **source** determines the behavior:
+* **`dir/` (with slash):** Copies the **contents** of the directory.
+* **`dir` (no slash):** Copies the **directory itself** (nesting it).
+
+### Why Shell Globs (`*`) Fail Dotfiles
+Using `*` as a source (e.g., `rsync -av * dest/`) relies on shell expansion, which:
+1.  **Excludes hidden files:** Skips `.bashrc`, `.git/`, etc., by default.
+2.  **Argument limits:** Can fail if the directory contains too many files.
+* **Fix:** Use `./` or `path/to/dir/` to include all hidden and visible files.
+
+---
+
+## Option Reference Table
+
+| Option | Description |
+| :--- | :--- |
+| `-a` | **Archive mode**: recursive, preserves symlinks, perms, times, group, owner |
+| `-v` | **Verbose**: provides details on files being transferred |
+| `-z` | **Compress**: reduces data sent over the network |
+| `-n` | **Dry Run**: shows what would happen without making changes |
+| `-u` | **Update**: skips files that are newer on the destination |
+| `-l` | **Links**: preserves symbolic links |
+| `-A` / `-X` | Preserve ACLs and Extended Attributes |
+| `--delete` | Delete files in destination that aren't in source |
+| `--progress` | Show progress bar during transfer |
+| `--size-only` | Skip files that match in size (ignore timestamps) |
+| `--bwlimit` | Limit I/O bandwidth; KBytes per second |
+
+---
+
+## Update Logic Comparison
+
+| Feature | `--update` (`-u`) | `--ignore-existing` | `--ignore-times` |
+| :--- | :--- | :--- | :--- |
+| **Overwrites existing?** | Only if Source is newer | Never | Always |
+| **Logic** | Time-based comparison | Existence-based | Content-based (Checksum) |
+| **Best Use-case** | Syncing work between devices | Resuming a massive file transfer | When timestamps are broken/unreliable |
+
+---
+
+## Resources
+
+* **Rsync Official Site:** [rsync.samba.org](https://rsync.samba.org/)
+* **Arch Wiki:** [rsync - ArchWiki](https://wiki.archlinux.org/title/rsync)
+* **Linux Man Pages:** `man rsync`

@@ -1,0 +1,118 @@
+# Curl Cheat-Sheet
+
+## Basic Downloads
+
+### Download all sequentially numbered files (1-24)
+```bash
+curl [http://example.com/pic](http://example.com/pic)[1-24].jpg
+```
+*Uses globbing to fetch multiple numbered resources in a single command.*
+
+### Save Output to a Specific File
+```bash
+curl -o filename.html [http://example.com](http://example.com)
+```
+*Saves the downloaded content to `filename.html`.*
+
+### Save Output using Remote Filename
+```bash
+curl -O [http://example.com/file.zip](http://example.com/file.zip)
+```
+*Saves the file using its original name from the server.*
+
+### Resume a Broken Download
+```bash
+curl -C - -O [http://example.com/largefile.zip](http://example.com/largefile.zip)
+```
+*Continues a previously interrupted download.*
+
+---
+
+## Working with Headers & Metadata
+
+### View Response Headers Only
+```bash
+curl -I [http://example.com](http://example.com)
+```
+*Fetches only the HTTP headers (HEAD request).*
+
+### Include Headers in Output
+```bash
+curl -i [http://example.com](http://example.com)
+```
+*Displays both the response headers and the body content.*
+
+### Pass a Custom Header
+```bash
+curl -H "Authorization: Bearer YOUR_TOKEN" [http://example.com/api](http://example.com/api)
+```
+*Sends a custom header, useful for API authentication.*
+
+---
+
+## Data Transfer & APIs
+
+### Send a POST Request
+```bash
+curl -X POST -d "param1=value1&param2=value2" [http://example.com/resource](http://example.com/resource)
+```
+*Sends data to the server using the POST method.*
+
+### Send JSON Data
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{"key":"value"}' [http://example.com/api](http://example.com/api)
+```
+*Sends a JSON payload with the appropriate content-type header.*
+
+### Upload a File (Multipart/form-data)
+```bash
+curl -F "file=@/path/to/image.png" [http://example.com/upload](http://example.com/upload)
+```
+*Uploads a local file using a form POST.*
+
+---
+
+## Advanced Options
+
+### Follow Redirects
+```bash
+curl -L [http://example.com](http://example.com)
+```
+*Automatically follows HTTP 3xx redirects to the final destination.*
+
+### Use a Proxy
+```bash
+curl -x http://proxyserver:8080 [http://example.com](http://example.com)
+```
+*Routes the request through a specified proxy server.*
+
+### Silent Mode
+```bash
+curl -s [http://example.com](http://example.com)
+```
+*Mutes the progress meter and error messages.*
+
+---
+
+## Option Reference Table
+
+| Option | Description |
+| :--- | :--- |
+| `-o` | Write output to a file |
+| `-O` | Write output to a file named like the remote file |
+| `-I` | Fetch HTTP headers only (HEAD) |
+| `-L` | Follow redirects |
+| `-H` | Custom header |
+| `-X` | Specify request method (GET, POST, PUT, DELETE) |
+| `-d` | HTTP POST data |
+| `-u` | User credentials (user:password) |
+| `-v` | Verbose mode (detailed connection info) |
+| `-s` | Silent mode (no progress/errors) |
+
+---
+
+## Resources
+
+* **Curl Documentation:** [curl.se/docs/](https://curl.se/docs/)
+* **Man Pages:** `man curl`
+* **Everything Curl (Book):** [everything.curl.dev](https://everything.curl.dev/)

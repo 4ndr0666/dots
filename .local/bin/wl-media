@@ -1,0 +1,283 @@
+#!/bin/bash
+# Author: 4ndr0666
+# ===================== // WL-MEDIA //
+## Description: Invokes wofi for media selection from user-specified dirs.
+##              In "Playlist Mode", a playlist will shuffle the selected dir.
+##              In "Browse Mode", user can recursively pick subdirectories and files.
+##              Features dynamic IPC socket queuing for active MPV instances.
+## --------------------------------------
+
+set -euo pipefail
+
+# Global Variables & Constants
+PLAYLIST_DIR="$HOME/.config/mpv/playlists"
+mkdir -p "$PLAYLIST_DIR"
+
+# Define media directories.
+MEDIA_DIRS=(
+    "$HOME/Videos"
+    "$HOME/Downloads"
+    "/storage"
+    "/storage/Downloads"
+    "/storage/Ari_cloud"
+    "/sto2"
+    "/sto2/Downloads"
+    "/sto2/Gym"
+    "/sto2/JD"
+    "/sto2/Downloads/kelly"
+    "/23.1/Downloads"
+    "/23.1/Edits"
+    "/23.1/JD"
+    "/23.1/Thecloud"
+    "/s3/home/andro"
+)
+
+# Wofi Prompt
+wofi_prompt() {
+    local prompt_text="$1"
+    local selection
+    selection=$(wofi --dmenu \
+        --prompt "$prompt_text" \
+        --width 500 \
+        --lines 15 \
+        --columns 1 || true)
+    echo "$selection"
+}
+
+# Validate
+validate_directory() {
+    local dir="$1"
+    if [[ -d "$dir" ]]; then
+        echo "$dir"
+    else
+        notify-send "[Error]" "Invalid directory: $dir"
+        return 1
+    fi
+}
+
+# MPV Functions
+play_media() {
+    local media="$1"
+    mpv --profile=playdir "$media" >/dev/null 2>&1 &
+    disown
+    notify-send "Playing: $(basename "$media")"
+}
+
+queue_media() {
+    local media="$1"
+    local sockets_dir="/tmp/mpvSockets"
+
+    if [[ ! -d "$sockets_dir" ]]; then
+        notify-send "[Error]" "No active mpv instances found (socket directory missing)."
+        return 1
+    fi
+
+    local mpv_sockets
+    mpv_sockets=$(find "$sockets_dir" -maxdepth 1 -type s -printf "%f\n" 2>/dev/null)
+    
+    if [[ -z "$mpv_sockets" ]]; then
+        notify-send "[Error]" "No active mpv instances found."
+        return 1
+    fi
+
+    local selected_socket
+    selected_socket=$(echo "$mpv_sockets" | wofi_prompt "Select mpv instance to queue:")
+    
+    if [[ -n "$selected_socket" ]]; then
+        local socket_path="$sockets_dir/$selected_socket"
+        
+        if [[ -S "$socket_path" ]]; then
+            # GAP MITIGATION: Escape double quotes in filename to prevent JSON syntax breakage
+            local safe_media="${media//\"/\\\"}"
+            echo '{ "command": ["loadfile", "'"$safe_media"'", "append-play"] }' | socat - "$socket_path"
+            notify-send "Queued media in mpv instance: $selected_socket"
+        else
+            notify-send "[Error]" "Selected item is not a valid mpv socket."
+        fi
+    fi
+}
+
+play_playlist() {
+    local playlist="$1"
+    if [[ -f "$playlist" && -s "$playlist" ]]; then
+        mpv --shuffle --playlist="$playlist" --loop-playlist=inf >/dev/null 2>&1 &
+        disown
+        notify-send "Playing playlist: $(basename "$playlist")"
+    else
+        notify-send "[Error]" "Playlist empty or doesn't exist: $(basename "$playlist")"
+    fi
+}
+
+# Playlist Generation Functions
+generate_playlist_name() {
+    local dir="$1"
+    local dir_name
+    dir_name=$(basename "$dir")
+
+    local base_name="${PLAYLIST_DIR}/${dir_name}_playlist"
+    local playlist_name="${base_name}.m3u"
+    local counter=1
+
+    while [[ -f "$playlist_name" ]]; do
+        playlist_name="${base_name}_${counter}.m3u"
+        ((counter++))
+    done
+
+    echo "$playlist_name"
+}
+
+generate_and_play_playlist() {
+    local dir="$1"
+    local playlist_file
+    playlist_file=$(generate_playlist_name "$dir")
+
+    find "$dir" -type f \( \
+        -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.avi" \
+        -o -iname "*.m4v" -o -iname "*.webm" -o -iname "*.gif" \
+        -o -iname "*.3gp" -o -iname "*.flv" -o -iname "*.ts" \
+        -o -iname "*.webp" -o -iname "*.wmv" -o -iname "*.mpg" \
+        \) >"$playlist_file"
+
+    if [[ -s "$playlist_file" ]]; then
+        play_playlist "$playlist_file"
+    else
+        notify-send "[Error]" "No media found in: $dir"
+        rm -f "$playlist_file"
+    fi
+}
+
+# Browse Directory Function
+browse_media() {
+    local current_dir="$1"
+    local history=("$current_dir") 
+
+    while true; do
+        local subdirs_and_files_menu=""
+        local subdirs
+        local media_files
+
+        subdirs=$(find "$current_dir" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort)
+        if [[ -n "$subdirs" ]]; then
+            subdirs_and_files_menu+="$subdirs"$'\n'
+        fi
+
+        media_files=$(find "$current_dir" -mindepth 1 -maxdepth 1 -type f \( \
+            -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.avi" \
+            -o -iname "*.m4v" -o -iname "*.webm" -o -iname "*.gif" \
+            -o -iname "*.3gp" -o -iname "*.flv" -o -iname "*.ts" \
+            -o -iname "*.webp" -o -iname "*.wmv" -o -iname "*.mpg" \
+            \) 2>/dev/null | sort)
+
+        if [[ -n "$media_files" ]]; then
+            subdirs_and_files_menu+="$media_files"$'\n'
+        fi
+
+        if [[ "${#history[@]}" -gt 1 ]]; then
+            subdirs_and_files_menu+="Back"$'\n'
+        fi
+        subdirs_and_files_menu+="Exit"
+
+        if [[ -z "$subdirs" && -z "$media_files" ]]; then
+            local empty_choice
+            empty_choice=$(printf "Back\nExit" | wofi_prompt "No media or subdirs in $(basename "$current_dir")")
+            if [[ "$empty_choice" == "Back" && "${#history[@]}" -gt 1 ]]; then
+                history=("${history[@]:0:${#history[@]}-1}")
+                current_dir="${history[-1]}"
+                continue
+            else
+                return
+            fi
+        fi
+
+        local selection
+        selection=$(echo -e "$subdirs_and_files_menu" | wofi_prompt "Browse: $(basename "$current_dir")")
+
+        if [[ "$selection" == "Exit" || -z "$selection" ]]; then
+            return 
+        elif [[ "$selection" == "Back" ]]; then
+            if [[ "${#history[@]}" -gt 1 ]]; then
+                # Pop last directory.
+                history=("${history[@]:0:${#history[@]}-1}")
+                current_dir="${history[-1]}" # Go to previous directory
+            else
+                notify-send "[Info]" "Already at the top level of browsing."
+            fi
+        elif [[ -d "$selection" ]]; then
+            current_dir="$selection"
+            history+=("$current_dir") # Push new directory to history
+        elif [[ -f "$selection" ]]; then
+            local action
+            action=$(printf "Play Now\nQueue in mpv\nBack\n" | wofi_prompt "Action for $(basename "$selection"):")
+            case "$action" in
+            "Play Now") play_media "$selection"; break ;; # Exit after playing
+            "Queue in mpv") queue_media "$selection" ;; # Stay in browse mode after queuing
+            "Back") ;; # Stay in the current directory listing
+            *) ;; # Do nothing on invalid action or cancel
+            esac
+        else
+            notify-send "[Error]" "Invalid selection: $selection"
+        fi
+    done
+}
+
+# Main Entry Point
+main() {
+    while true; do
+        # Build menu from $MEDIA_DIRS plus "Type a directory..." and "Exit"
+        local main_menu=""
+        for d in "${MEDIA_DIRS[@]}"; do
+            main_menu+="$d"$'\n'
+        done
+        main_menu+="Type a directory...\nExit"
+
+        local dir_choice
+        dir_choice=$(echo -e "$main_menu" | wofi_prompt "Select a media directory:")
+
+        if [[ "$dir_choice" == "Exit" || -z "$dir_choice" ]]; then
+            exit 0 # Exit the script
+        elif [[ "$dir_choice" == "Type a directory..." ]]; then
+            local typed_dir
+            typed_dir=$(echo "" | wofi_prompt "Enter a directory path:")
+            
+            if [[ -n "$typed_dir" ]]; then
+                # GAP MITIGATION: Safe tilde expansion without using `eval`
+                typed_dir="${typed_dir/#\~/$HOME}"
+                
+                if ! validate_directory "$typed_dir" >/dev/null; then
+                    continue # Go back to main menu if typed directory is invalid
+                fi
+                dir_choice="$typed_dir"
+            else
+                continue # Go back to main menu if nothing was typed
+            fi
+        else
+            if ! validate_directory "$dir_choice" >/dev/null; then
+                continue # Go back to main menu if selected directory is invalid
+            fi
+        fi
+
+        # Mode selection: "Play Entire Directory" or "Browse Files"
+        local mode_choice
+        mode_choice=$(echo -e "Play Entire Directory\nBrowse Files\nExit" | wofi_prompt "Select a mode for $(basename "$dir_choice"):")
+
+        case "$mode_choice" in
+        "Play Entire Directory")
+            generate_and_play_playlist "$dir_choice"
+            break # Exit script after starting playlist
+            ;;
+        "Browse Files")
+            browse_media "$dir_choice"
+            # After browse_media finishes, the loop continues, showing the main menu again.
+            ;;
+        "Exit" | "")
+            exit 0 # Exit the script
+            ;;
+        *)
+            notify-send "[Error]" "Invalid mode: $mode_choice"
+            ;;
+        esac
+    done
+}
+
+# Call the main function
+main

@@ -1,0 +1,107 @@
+# KEYS: openbox
+
+## Menu & Window Navigation
+
+| Key | Action |
+| :--- | :--- |
+| **W-Space** | Open Root Menu |
+| **A-Space** | Open Client Menu (Active Window) |
+| **A-S-Space** | Open Combined Client List Menu |
+| **C-A-Space** | Open Application Menu |
+| **W-Tab** / **A-Tab** | Switch to Next Window |
+| **W-d** | Toggle "Show Desktop" |
+
+---
+
+## Desktop & Workspace Management
+
+| Key | Action |
+| :--- | :--- |
+| **C-A-Left** / **Right** | Go to Previous/Next Desktop |
+| **W-equal** | Add a New Desktop |
+| **W-minus** | Remove Last Desktop |
+| **W-S-Left** / **Right** | Send Active Window to Previous/Next Desktop |
+
+---
+
+## Window Manipulation
+
+### Movement & Resizing
+* **W-A-Arrows** - Move window relative to current position
+* **W-C-Arrows** - Resize window relative to current size
+* **W-A-m** - Interactive Move (Notification)
+* **W-A-r** - Interactive Resize (Notification)
+
+### State Toggles
+* **A-F4** - Close Window
+* **A-F5** - Iconify (Minimize) Window
+* **A-F6** - Toggle Maximize
+* **A-F7** - Toggle Shade (Roll up)
+* **A-F8** - Toggle Decorations (Borders/Titlebar)
+* **A-F9** - Toggle Omnipresent (Visible on all desktops)
+* **A-F10** - Toggle Fullscreen
+* **A-F11** - Toggle Always On Top
+* **A-F12** - Toggle Always On Bottom
+
+---
+
+## System & Screenshot Tools
+
+| Key | Action |
+| :--- | :--- |
+| **Print** | Take Screenshot (Immediate) |
+| **A-Print** | Take Screenshot (5s Delay) |
+| **S-Print** | Take Screenshot (10s Delay) |
+| **C-Print** | Take Screenshot of Active Window |
+| **W-Print** | Take Screenshot of Selected Area |
+| **C-A-l** | Lock Screen |
+| **C-S-R** | Reload Openbox Configuration |
+| **C-S-Backspace** | Restart Openbox |
+| **C-A-Delete** | Exit Openbox |
+
+---
+
+## Application Launchers
+
+### General
+* **A-F1** - Rofi Application Launcher
+* **W-r** - Rofi Run Command
+* **W-x** - Rofi Power Menu
+* **W-s** - Rofi Screenshot Tool
+* **W-n** - Network Manager (Dmenu)
+* **W-o** - Launch GUI Applications
+* **W-F1** - Open Help Popup
+
+### Software & Tools
+* **W-w** - Brave Browser
+* **W-m** - Min Browser
+* **W-f** - Thunar File Manager
+* **W-e** - Geany Text Editor
+* **C-A-v** - Neovim
+* **W-p** - Color Picker
+* **W-g** - Garuda Welcome
+* **W-h** - Btop (as Root)
+* **W-j** - JDownloader
+* **W-v** / **W-c** - Video Cutting Tools (Flawless/Lossless)
+* **C-A-s** - Simple Screen Recorder
+* **C-A-h** - Gnome Disks
+* **C-A-g** - Music Player
+
+### Terminals
+* **C-A-t** - Xfce Terminal
+* **C-W-Return** - Terminal (as Root)
+* **C-A-r** - LF File Manager (in Alacritty)
+
+---
+
+## Legend
+* **W**: Super/Windows Key
+* **A**: Alt Key
+* **C**: Control Key
+* **S**: Shift Key
+
+---
+
+## Resources
+* **Openbox Wiki:** [openbox.org](http://openbox.org/wiki/Main_Page)
+* **Garuda Linux Forum:** [forum.garudalinux.org](https://forum.garudalinux.org/)

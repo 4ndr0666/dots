@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Smart launcher for X11/Wayland apps, with safe root GUI support via xhost
+
+log_info()  { echo "[INFO] $1"; }
+log_error() { echo "[ERROR] $1" >&2; }
+
+detect_env() {
+    if [[ ${XDG_SESSION_TYPE:-} == "wayland" ]]; then
+        export GDK_BACKEND=wayland,x11
+        export QT_QPA_PLATFORM=wayland
+    else
+        export GDK_BACKEND=x11
+        export QT_QPA_PLATFORM=xcb
+    fi
+}
+
+grant_root_xwayland()   { command -v xhost &>/dev/null && xhost +SI:localuser:root; }
+revoke_root_xwayland()  { command -v xhost &>/dev/null && xhost -SI:localuser:root; }
+
+run_with_env_vars() {
+    detect_env
+    "$@"
+}
+
+run_as_root() {
+    grant_root_xwayland
+    if [[ $EUID -eq 0 ]]; then
+        "$@"
+    else
+        sudo -E -A "$@"
+    fi
+    revoke_root_xwayland
+}
+
+main() {
+    if [[ $# -eq 0 ]]; then
+        log_error "No application specified to run."
+        exit 1
+    fi
+    if [[ $1 == "--root" ]]; then
+        shift
+        if [[ $# -eq 0 ]]; then
+            log_error "No application specified to run as root."
+            exit 1
+        fi
+        run_as_root "$@"
+    else
+        run_with_env_vars "$@"
+    fi
+}
+
+main "$@"
+

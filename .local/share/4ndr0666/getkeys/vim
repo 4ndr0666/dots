@@ -1,0 +1,366 @@
+# Vim / Neovim Cheat-Sheet
+
+## Leader Key
+
+- **Set Leader Key:** Add this to your `vimrc`/`init.vim` to define your `<leader>` key (example uses a comma):
+  ```vim
+  let mapleader=","
+  ```
+
+---
+
+## Basic Movement
+
+- **Cursor Navigation:**
+  - Right: `l`
+  - Left: `h`
+  - Up: `k`
+  - Down: `j`
+
+- **Line Navigation:**
+  - Start of the line: `0`
+  - End of the line: `$`
+  - First line of file: `gg`
+  - Last line of file: `G`
+  - Go to a specific line: `<number>G`
+
+- **Insert Mode:**
+  - Insert at cursor: `i`
+  - Insert after cursor: `a`
+  - Open a new line below: `o`
+
+---
+
+## Deletion and Change
+
+- **Deletion:**
+  - **Delete a word around a character:** `daw`  
+    *Example:* In the text:  
+    ```plaintext
+    Here is some "txt to delete" for example.
+    ```  
+    Running `daw"` deletes the word along with its surrounding delimiters.
+  
+  - **Delete a word inside a character:** `diw`  
+    *Example:* ```plaintext
+    Here is some "txt to delete" for example.
+    ```  
+    Running `diw"` deletes only the inner text, leaving the quotes intact.
+  
+  - **Delete to the end of a word:** `dw`
+  - **Delete the entire line:** `dd`
+  - **Change without yanking:** `c` (deletes and enters Insert mode without saving in the default register)
+
+- **Copy/Paste and Cut:**
+  - Yank (copy) line: `yy`
+  - Paste after: `p`
+  - Cut and paste line: `ddp`
+
+- **Undo/Redo:**
+  - Undo: `u`
+  - Redo: `Ctrl + r`
+
+- **Visual Mode:**
+  - Character-wise selection: `v`
+  - Line-wise selection: `V`
+  - Block selection: `Ctrl + v`
+
+---
+
+## Text Manipulation
+
+- **Text Objects:**
+  - Delete inside quotes: `di"`
+  - Yank inside parentheses: `yi(`
+
+- **Indentation:**
+  - Auto-indent current line: `=`
+  - Auto-indent entire document: `gg=G`
+
+- **Find & Replace:**
+  - Replace in entire file: `:%s/old/new/g`
+  - Replace in current line: `:s/old/new/g`
+
+- **Spell Check:**
+  - Enable: `:set spell`
+  - Disable: `:set nospell`
+
+- **Help:**
+  - Open help for a command: `:help <cmd>`
+
+---
+
+## Scrolling and Viewing
+
+- **Scrolling:**
+  - Scroll up half-screen: `Ctrl + u`
+  - Scroll down half-screen: `Ctrl + d`
+- **Screen Positioning:**
+  - Move to top of screen: `H`
+  - Move to middle: `M`
+  - Move to bottom: `L`
+
+---
+
+## Command Mode (Ex Commands)
+
+### File Operations
+
+- **Save and Quit:** `:wq`
+- **Quit without Saving:** `:q!`
+- **Save as:** `:w <filename>`
+- **Open a File:** `:e <filename>`
+- **Save with Sudo:** `:w!!`
+
+### Window and Tab Management
+
+- **Window Splits:**
+  - Horizontal split: `:split`
+  - Vertical split: `:vsplit`
+  - Navigate splits: `<C-h>`, `<C-j>`, `<C-k>`, `<C-l>`
+
+- **Tabs:**
+  - Open new tab: `:tabnew <file>`
+  - Close tab: `:tabclose`
+  - Cycle tabs: `:tabnext` / `:tabprev`
+
+### Buffer Management
+
+- **Close Buffer:** `:bd`
+- **List Buffers:** `:buffers`
+- **Next/Previous Buffer:** `:bnext` / `:bprev`
+
+---
+
+## Shell and System Commands
+
+- **Execute one command in Insert mode:** `Ctrl + o <cmd>`
+- **Run Shellcheck on current file:** `,s`
+
+---
+
+## General Key Mappings and Shortcuts
+
+- **Quick Insert `<++>` Placeholder:** `,,`
+- **Replace All in File:** `S` (typically mapped to `:%s//g`)
+- **Compile File (LaTeX, Groff, etc.):** `,c`
+- **Open Output File (e.g., PDF, HTML):** `,p`
+
+---
+
+## Plugin Management (vim-plug)
+
+### vim-plug Commands
+
+- **Install Plugins:** `:PlugInstall`
+- **Update Plugins:** `:PlugUpdate`
+- **Clean Unused Plugins:** `:PlugClean`
+- **Check Plugin Status:** `:PlugStatus`
+
+### Example Configuration
+
+```vim
+call plug#begin('~/.vim/plugged')
+Plug 'preservim/nerdtree'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'vim-airline/vim-airline'
+Plug 'Valloric/YouCompleteMe'
+Plug 'vim-syntastic/syntastic'
+Plug 'itchyny/lightline.vim'
+" ALE for asynchronous linting
+Plug 'dense-analysis/ale'
+call plug#end()
+```
+
+---
+
+## Popular Plugins and Custom Mappings
+
+- **vim-surround:** - Surround word with parentheses: `ysiw)`  
+  - Change surrounding quotes: `cs"'`  
+  - Delete surrounding quotes: `ds"`
+
+- **NERDTree:** - Toggle NERDTree: `,n`  
+  - Open file: `o`  
+  - Open in new tab: `t`  
+  - Toggle hidden files: `I`  
+  - Open menu: `m`
+
+- **vim-commentary:** - Comment out a line: `gcc`  
+  - Comment motion: `gc`
+
+---
+
+## ALE (Asynchronous Lint Engine)
+
+ALE provides real-time linting and fixing as you edit your code without interrupting your workflow.
+
+- **Fix Linting Issues:** ```vim
+  :ALEFix
+  ```  
+  Automatically fix issues using supported linters/formatters.
+
+- **Manually Lint File:** ```vim
+  :ALELint
+  ```  
+  Trigger linting manually on the current file.
+
+- **Navigation Between Errors/Warnings:** - Next error/warning:  
+    ```vim
+    :ALENext
+    ```  
+  - Previous error/warning:  
+    ```vim
+    :ALEPrevious
+    ```
+
+- **Toggle ALE:** ```vim
+  :ALEToggle
+  ```  
+  Enable or disable ALE linting on the fly.
+
+- **Display ALE Information:** ```vim
+  :ALEInfo
+  ```  
+  Show detailed information about the current linting issues and active linters.
+
+- **Custom Mappings (Example):** Add these to your `vimrc`/`init.vim` for quick navigation:
+  ```vim
+  nnoremap <silent> ]e :ALENext<CR>
+  nnoremap <silent> [e :ALEPrevious<CR>
+  ```
+  
+---
+
+## nvim-lspconfig and nvim-cmp (Optional)
+
+- **LSP Setup:** Use `nvim-lspconfig` to configure language servers (e.g., `clangd` for C/C++, `pyright` for Python).
+
+- **Autocompletion:** Use `nvim-cmp` for auto-completion; typical mappings:
+  - Next suggestion: `<Tab>`
+  - Previous suggestion: `<S-Tab>`
+  - Confirm selection: `<CR>`
+
+---
+
+## Vimwiki Customization
+
+- **File Extensions Supported:** `.md`, `.Rmd`, `.markdown`
+- **Usage:** For notes, to-do lists, and personal knowledge bases.
+- **Open Vimwiki Index:** `,v`
+
+---
+
+## Options and Settings
+
+### Indentation and Tabs
+
+```vim
+set autoindent       " Enable automatic indentation
+set tabstop=4        " Set tab width to 4 spaces
+set shiftwidth=4     " Set indentation width to 4 spaces
+set expandtab        " Use spaces instead of tabs
+```
+
+### Line Numbers
+
+```vim
+set number           " Show absolute line numbers
+set relativenumber   " Show relative line numbers
+```
+
+### Search and Highlight
+
+```vim
+set hlsearch         " Highlight search results
+set incsearch        " Incremental search
+set ignorecase       " Case-insensitive search
+set smartcase        " Case-sensitive if uppercase letters present
+```
+
+### Appearance
+
+```vim
+syntax on            " Enable syntax highlighting
+set mouse=a          " Enable mouse support
+set wrap             " Enable line wrapping (or use 'nowrap' to disable)
+```
+
+---
+
+## Custom Keybindings
+
+- **Quick Save:** ```vim
+  nnoremap <leader>w :w<CR>
+  ```
+- **Quick Quit:** ```vim
+  nnoremap <leader>q :q<CR>
+  ```
+- **Toggle NERDTree:** ```vim
+  nnoremap <leader>n :NERDTreeToggle<CR>
+  ```
+- **Window Navigation:**
+  ```vim
+  nnoremap <C-h> <C-w>h
+  nnoremap <C-j> <C-w>j
+  nnoremap <C-k> <C-w>k
+  nnoremap <C-l> <C-w>l
+  ```
+- **Visual Mode Paste (without affecting the default register):**
+  ```vim
+  vnoremap p "_dP
+  ```
+
+---
+
+## File Management and Autocommands
+
+- **Remove Trailing Whitespace on Save:** Add an autocommand to remove trailing whitespace automatically:
+  ```vim
+  autocmd BufWritePre * %s/\s\+$//e
+  ```
+
+- **Disable Auto-Commenting on New Lines:** ```vim
+  autocmd FileType * setlocal formatoptions-=cro
+  ```
+
+- **Filetype Detection:** Ensure specific settings for Markdown, LaTeX, Vimwiki, etc.
+
+---
+
+## Multi-cursor Support
+
+Vim doesn’t include native multi-cursor editing, but plugins like [vim-visual-multi](https://github.com/mg979/vim-visual-multi) provide this feature:
+- **Select Next Occurrence:** `<C-n>`
+- **Select Previous Occurrence:** `<C-p>`
+- **Remove Current Selection:** `<C-x>`
+
+---
+
+## Command Summary Table
+
+| **Command** | **Description** |
+|----------------|-------------------------------------------|
+| `:PlugInstall` | Install plugins                           |
+| `ysiw)`        | Surround word with `()`                   |
+| `,n`           | Toggle NERDTree                           |
+| `gcc`          | Comment out the current line              |
+| `:ALEFix`      | Fix linting issues                        |
+| `:ALELint`     | Lint the current file                     |
+| `:ALENext`     | Jump to the next linting error/warning    |
+| `:ALEPrevious` | Jump to the previous linting error/warning|
+| `:ALEToggle`   | Toggle ALE on/off                         |
+| `:ALEInfo`     | Show detailed ALE status                  |
+| `<C-h/j/k/l>`  | Navigate between window splits            |
+| `:w!!`         | Save file with sudo privileges            |
+
+---
+
+## Resources
+
+- **Neovim Documentation:** [Neovim Help](https://neovim.io/doc/)
+- **Vim Documentation:** [Vim Help](https://vimhelp.org/)
+- **Vim Wiki:** [Vim Wiki](https://vim.fandom.com/wiki/Vim_Wiki)
+- **vim-plug GitHub:** [vim-plug](https://github.com/junegunn/vim-plug)
+- **ALE GitHub:** [dense-analysis/ale](https://github.com/dense-analysis/ale)
+- **vim-visual-multi GitHub:** [vim-visual-multi](https://github.com/mg979/vim-visual-multi)

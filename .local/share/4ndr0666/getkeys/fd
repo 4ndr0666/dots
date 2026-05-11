@@ -1,0 +1,124 @@
+# KEYS: fd 
+
+## Most Common Usage: Safe Deletions
+```bash
+fd "pattern" -x rm -v {}
+```
+*Finds files matching "pattern" and executes a verbose remove on each.*
+
+---
+
+## Search Basics
+
+### Find Files by Name or Pattern
+```bash
+fd <PATTERN>
+```
+
+### Find Files by Extension
+```bash
+fd -e ext
+```
+*Example: `fd -e md` finds all Markdown files.*
+
+### Search Specific Directory
+```bash
+fd PATTERN /path/to/search
+```
+
+### Search Hidden Files (Dotfiles)
+```bash
+fd -H PATTERN
+```
+
+---
+
+## Filtering Results
+
+### List Only Directories
+```bash
+fd -t d PATTERN
+```
+
+### Exclude Specific Patterns
+```bash
+fd PATTERN --exclude "*.log"
+```
+
+### Use Regular Expressions
+```bash
+fd --regex 'pattern$'
+```
+*Note: `fd` uses regex by default, but this forces specific regex behavior.*
+
+---
+
+## Executing Commands
+
+### Execute Command on Each Result
+```bash
+fd PATTERN -x COMMAND {}
+```
+*Replaces `find ... -exec`. Use `{}` as a placeholder for the filename.*
+
+### Execute Command Once (with all results)
+```bash
+fd PATTERN -X COMMAND
+```
+*Example: `fd PATTERN -X ls -l` lists all matches in a detailed format.*
+
+### Interactive Deletion
+```bash
+fd PATTERN -x rm -iv {}
+```
+*Prompts for confirmation before deleting each match.*
+
+### Search Inside File Content
+```bash
+fd --exec grep --color=auto -n "SEARCHTEXT" {}
+```
+
+---
+
+## Advanced Output & Scripting
+
+### Show Absolute Paths
+```bash
+fd -a PATTERN
+```
+
+### Null-Separated Output
+```bash
+fd -0 PATTERN
+```
+*Used for piping into `xargs -0` to handle filenames with spaces safely.*
+
+### Combine Options
+```bash
+fd -t f -H PATTERN --exclude="node_modules"
+```
+*Finds hidden files, excluding node_modules, limited to file types only.*
+
+---
+
+## Option Reference Table
+
+| Option | Description |
+| :--- | :--- |
+| `-t <type>` | Filter by type (f: file, d: directory, l: symlink) |
+| `-e <ext>` | Filter by file extension |
+| `-H` | Include hidden files and directories |
+| `-I` | Include patterns from `.gitignore` |
+| `-a` | Output absolute paths |
+| `-x <cmd>` | Execute command for each search result |
+| `-X <cmd>` | Execute command once with all search results as arguments |
+| `-E <pat>` | Exclude entries matching the given pattern |
+| `-0` | Use null separator (for xargs) |
+
+---
+
+## Resources
+
+* **fd GitHub Repository:** [sharkdp/fd](https://github.com/sharkdp/fd)
+* **Man Pages:** `man fd`
+* **Help Message:** `fd --help`

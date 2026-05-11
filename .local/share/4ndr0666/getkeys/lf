@@ -1,0 +1,72 @@
+# KEYS: lf
+
+## General Navigation
+
+| Key | Action |
+| :--- | :--- |
+| **j** / **k** | Navigate down/up in the file list |
+| **h** | Enter parent directory |
+| **l** | Open selected directory or file |
+| **g** | Go to the top of the file list |
+| **G** | Go to the bottom of the file list |
+| **Ctrl+f** | Open fuzzy finder (`fzf`) for quick navigation |
+| **Ctrl+r** | Reload the current directory |
+| **Ctrl+s** | Toggle visibility of hidden files |
+| **Ctrl+e** | Scroll one line down |
+| **Ctrl+y** | Scroll one line up |
+| **V** | Open the current directory in Neovim |
+
+---
+
+## File and Directory Operations
+
+### Basic Management
+* **x** - Execute/open selected file with appropriate application
+* **o** - Open with default mime application
+* **O** - Open with choice of application (mime)
+* **D** - Delete selected file(s) or directory(ies) (with confirmation)
+* **E** - Extract the selected archive file
+
+### Transfer & Renaming
+* **C** - Copy selected items to a specified location
+* **M** - Move selected items to a specified location
+* **B** - Bulk rename selected files using an external editor
+* **b** - Set selected image as wallpaper (requires external script)
+
+---
+
+## Advanced Renaming Bindings
+
+| Key | Action |
+| :--- | :--- |
+| **A** | Rename file with cursor at the **end** of the filename |
+| **I** | Rename file with cursor at the **beginning** of the filename |
+| **i** | Rename file with cursor just **before the extension** |
+| **a** | Rename file with cursor just **after the extension** |
+| **c** | Start a new rename operation with an **empty filename** |
+
+---
+
+## Utility & Misc
+
+* **W** - Open a new terminal window (requires `$TERMINAL` env var)
+* **Y** - Copy paths of selected file(s) to the system clipboard
+* **Ctrl+n** - Create a new directory
+* **gh** - Custom user-defined action (mapping)
+
+---
+
+## Configuration
+
+To maintain custom keybindings and shortcuts, ensure your `lfrc` includes:
+```bash
+source "~/.config/lf/shortcutrc"
+```
+
+---
+
+## Resources
+
+* **lf GitHub Repository:** [gokcehan/lf](https://github.com/gokcehan/lf)
+* **Documentation:** [lf-doc](https://godoc.org/github.com/gokcehan/lf)
+* **Man Pages:** `man lf`

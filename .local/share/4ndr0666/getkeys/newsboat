@@ -1,0 +1,59 @@
+# KEYS: newsboat
+
+## Navigation
+
+| Key | Action |
+| :--- | :--- |
+| **j** / **k** | Move down / up in the list |
+| **l** / **Enter** | Open the selected entry or feed |
+| **h** / **q** | Back to previous view / Quit current view |
+| **Q** | Quit newsboat immediately |
+| **J** / **K** | Move to previous / next feed in the list |
+| **n** | Jump to the next unread article |
+| **N** | Jump to the previous unread article |
+
+---
+
+## Article Management
+
+* **a** - Toggle the selected article's status as Read/Unread.
+* **A** - Mark all articles in the current feed as Read.
+* **r** - Reload the current feed.
+* **R** - Reload all feeds.
+* **s** - Save the article to a file.
+
+---
+
+## Link Handling
+
+`newsboat` allows for powerful link manipulation, often extended via custom macros in the configuration file.
+
+| Key | Action |
+| :--- | :--- |
+| **U** | Show a list of all URLs within the article |
+| **, ,** | Open the main article link with a custom `linkhandler` script |
+| **, p** | Pick which external program to open the link with |
+| **, v** | Open the video link directly in `mpv` |
+| **, w** | Open the link in the `w3m` terminal browser |
+| **, c** | Copy the link to the system clipboard |
+
+---
+
+## Configuration & Filters
+
+* **/** - Search for articles.
+* **&** - Filter articles by a specific expression.
+* **ctrl-p** - Go to previous item.
+* **ctrl-n** - Go to next item.
+
+### Essential Files
+* **Feeds list:** `~/.newsboat/urls`
+* **Configuration:** `~/.newsboat/config`
+
+---
+
+## Resources
+
+* **Newsboat Official Site:** [newsboat.org](https://newsboat.org/)
+* **GitHub Repository:** [newsboat/newsboat](https://github.com/newsboat/newsboat)
+* **Man Pages:** `man newsboat`

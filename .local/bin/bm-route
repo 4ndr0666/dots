@@ -1,0 +1,30 @@
+#!/bin/sh
+# POSIX bookmark router (Superset of lfrc moveto/copyto logic)
+# action: copy or move
+
+action="$1"
+shift
+[ $# -eq 0 ] && exit 0
+
+bmdirs="${XDG_CONFIG_HOME:-$HOME/.config}/shell/bm-dirs"
+[ ! -f "$bmdirs" ] && exit 1
+
+# Extract target via fzf (Identical to lfrc logic)
+dest=$(sed -e 's/\s*#.*//' -e '/^$/d' -e 's/^\S*\s*//' "$bmdirs" | \
+       fzf --layout=reverse --height 40% --prompt "$(printf '%s to where? ' "$action")" | \
+       sed 's|~|'"$HOME"'|g')
+
+[ -z "$dest" ] && exit 0
+destpath=$(eval printf '%s' "$dest")
+[ ! -d "$destpath" ] && notify-send "Error" "$destpath is not a directory." && exit 1
+
+# Execute operations with lfrc-style notifications
+for file in "$@"; do
+    if [ "$action" = "move" ]; then
+        mv -iv "$file" "$destpath"
+    elif [ "$action" = "copy" ]; then
+        cp -ivr "$file" "$destpath"
+    fi
+done
+
+notify-send "🚀 $action complete" "Sent to $destpath"

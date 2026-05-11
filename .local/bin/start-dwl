@@ -1,0 +1,54 @@
+#!/bin/sh
+# =================================================================
+# =             DWL WAYLAND ENVIRONMENT WRAPPER                   =
+# =             Synthesized from JaKooLit Telemetry               =
+# =================================================================
+
+# --- XDG Specifications (Re-aligned for DWL) ---
+export XDG_CURRENT_DESKTOP=dwl
+export XDG_SESSION_DESKTOP=dwl
+export XDG_SESSION_TYPE=wayland
+export XDG_CURRENT_SESSION=dwl
+
+# --- Toolkit Backend Variables ---
+export GDK_BACKEND="wayland,*"
+export QT_QPA_PLATFORM="wayland;wayland-egl;xcb"
+export TDESKTOP_DISABLE_GTK_INTEGRATION=1
+export CLUTTER_BACKEND=wayland
+export BEMENU_BACKEND=wayland
+export WINIT_UNIX_BACKEND=wayland
+
+# --- QT Variables ---
+export QT_AUTO_SCREEN_SCALE_FACTOR=1
+export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+
+# --- Java & Non-Reparenting ---
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+# --- Browser & Electron Hardening ---
+export MOZ_ENABLE_WAYLAND=1
+export ELECTRON_OZONE_PLATFORM_HINT=auto
+
+# --- Execute Startup Daemons Asynchronously ---
+# Auth agent
+~/.config/hypr/scripts/Hyprpolkit.sh &
+
+# Networking & Notifications
+nm-applet --indicator &
+mako &
+
+# Bars and Wallpapers
+waybar &
+awww-daemon --format xrgb &
+hypridle &
+
+# Clipboard Manager
+wl-paste --type text --watch cliphist store &
+wl-paste --type image --watch cliphist store &
+
+# Dropdown / Init Scripts
+~/.config/hypr/UserScripts/4ndr0init.sh &
+~/.config/hypr/scripts/Dropterminal.sh kitty &
+
+# Execute dwl and pipe output to a log file.
+exec dwl > "$HOME/.cache/dwl.log" 2>&1

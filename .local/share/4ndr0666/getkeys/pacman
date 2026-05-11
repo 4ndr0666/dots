@@ -1,0 +1,82 @@
+# KEYS: Pacman
+
+## Basic Operations
+
+### Synchronize and Upgrade System
+```bash
+sudo pacman -Syu
+```
+*Refreshes the package databases and upgrades all outdated packages.*
+
+### Install a Specific Package
+```bash
+sudo pacman -S package_name
+```
+
+### Remove a Package
+```bash
+sudo pacman -R package_name
+```
+
+### Remove a Package and its Dependencies
+```bash
+sudo pacman -Rs package_name
+```
+*Removes the package and any of its dependencies not required by other packages.*
+
+---
+
+## Package Management & Inspection
+
+### Querying the Database
+- **List all explicitly installed packages:** `pacman -Qe`
+- **Identify orphaned packages:** `pacman -Qdt`
+- **Identify foreign packages (e.g., from AUR):** `pacman -Qm`
+- **Search for a package in the repositories:** `pacman -Ss keyword`
+- **View detailed information about a package:** `pacman -Qi package_name`
+
+### File & Integrity Checks
+- **List all files installed by a package:** `pacman -Ql package_name`
+- **Find which package owns a specific file:** `pacman -Qo /path/to/file`
+- **Check for corrupted packages/files:** `pacman -Qk`
+
+---
+
+## Maintenance & Troubleshooting
+
+### Cache Management
+- **Free up disk space (Clean cache):** `sudo pacman -Sc`
+- **Completely clear cache:** `sudo pacman -Scc`
+
+### Downgrading a Package
+If a new version causes issues, find it in your local cache:
+1. `ls /var/cache/pacman/pkg/package_name*`
+2. `sudo pacman -U /var/cache/pacman/pkg/package_name-version.pkg.tar.zst`
+
+### Keyring & Sync Issues
+- **Refresh the keyring:** `sudo pacman -Sy archlinux-keyring`
+- **Force database refresh:** `sudo pacman -Syy`
+
+---
+
+## Command Reference Table
+
+| Command | Description |
+| :--- | :--- |
+| `pacman -Syu` | Sync and update all packages |
+| `pacman -Qe` | List explicitly installed packages |
+| `pacman -Qdt` | Identify unused dependencies (orphans) |
+| `sudo pacman -Sc` | Clean the package cache |
+| `pacman -Qk` | Validate package integrity/file presence |
+| `pacman -Qm` | List packages from outside official repos (AUR) |
+| `pacman -Ql <pkg>` | List all files belonging to a package |
+| `checkupdates` | Safely check for updates without syncing |
+| `pacman -Syy` | Force refresh of all package databases |
+
+---
+
+## Resources
+
+* **Arch Wiki - Pacman:** [wiki.archlinux.org/title/pacman](https://wiki.archlinux.org/title/pacman)
+* **Arch Wiki - AUR:** [wiki.archlinux.org/title/Arch_User_Repository](https://wiki.archlinux.org/title/Arch_User_Repository)
+* **Pacman Rosetta:** [wiki.archlinux.org/title/Pacman_Rosetta](https://wiki.archlinux.org/title/Pacman_Rosetta) (Comparison to apt, dnf, etc.)

@@ -1,0 +1,65 @@
+# KEYS: mutt
+
+## Navigation
+
+| Key | Action |
+| :--- | :--- |
+| **j** / **k** | Move down / up |
+| **d** / **u** | Move down / up half-page |
+| **gg** | Move to top of the list |
+| **G** | Move to last message |
+| **ctrl-f** | Search mail (indexed with `notmuch`) |
+| **l** | Limit view (filter messages) |
+
+---
+
+## Message Operations
+
+| Key | Action |
+| :--- | :--- |
+| **r** | Reply to sender |
+| **R** | Reply all |
+| **D** | Mark message for deletion |
+| **U** | Unmark message for deletion |
+| **v** | View / download attachments |
+| **S** | Sync and save mailbox changes |
+| **ctrl-r** | Mark all messages in folder as read |
+| **C** | Copy message to another mailbox |
+| **M** | Move message to another mailbox |
+
+---
+
+## URL & Link Handling
+
+* **ctrl-u** / **, ,** - Seek and extract URLs from the message body (usually requires `urlview` or `urlscan`).
+
+---
+
+## Sidebar & Folder Navigation
+
+### Sidebar Controls
+* **B** - Toggle sidebar visibility (Hide/Reveal)
+* **ctrl-j** / **ctrl-k** - Move highlight down / up in sidebar
+* **ctrl-o** - Open the mailbox selected in the sidebar
+
+### Quick Folder Jumps
+* **gi** - Go to **Inbox**
+* **gs** - Go to **Sent** mail
+* **gd** - Go to **Drafts**
+* **gS** - Go to **Spam**
+* **i#** - Switch to account number **#** (e.g., `i1`, `i2`)
+
+---
+
+## External Syncing
+
+* **o** - Run **Quick Sync** with `offlineimap`
+* **O** - Run **Full Sync** with `offlineimap`
+
+---
+
+## Resources
+
+* **NeoMutt Project:** [neomutt.org](https://neomutt.org/)
+* **Mutt Wiki:** [gitlab.com/muttmua/mutt/-/wikis/home](https://gitlab.com/muttmua/mutt/-/wikis/home)
+* **Man Pages:** `man mutt` / `man neomutt`

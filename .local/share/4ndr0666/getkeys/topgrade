@@ -1,0 +1,134 @@
+# KEYS: topgrade
+
+## Installation & Setup
+
+### Creating the Configuration File
+Customize Topgrade using the configuration file located at `~/.config/topgrade.toml`.
+
+```bash
+mkdir -p ~/.config && touch ~/.config/topgrade.toml
+```
+
+---
+
+## Core Commands
+
+### The Basics
+* **Update Everything:** `topgrade`
+* **Dry Run (Simulation):** `topgrade --dry-run`
+* **Verbose Output:** `topgrade --verbose`
+
+### Targeting Components
+* **Update Only Specific Components:**
+  ```bash
+  topgrade --only git,aur
+  ```
+* **Exclude Specific Components:**
+  ```bash
+  topgrade --exclude flatpak,docker
+  ```
+* **Use Custom Config:**
+  ```bash
+  topgrade --config /path/to/custom_topgrade.toml
+  ```
+
+---
+
+## Configuration (`topgrade.toml`)
+
+### Exclude Update Steps
+```toml
+[disable]
+flatpak = true
+docker = true
+```
+
+### Git Repository Management
+```toml
+[git]
+excluded_dirs = ["/home/user/projects/ignored_repo"]
+args = ["--rebase"]
+```
+
+### Automation Hooks
+```toml
+[[presteps]]
+command = "echo Starting update process"
+
+[[poststeps]]
+command = "echo Update process completed"
+```
+
+### Arch Linux / AUR Specifics
+```toml
+[arch]
+yay = true # Set your preferred AUR helper
+```
+
+---
+
+## Scheduling Updates
+
+### systemd Timer (Linux)
+1. **Service (`/etc/systemd/system/topgrade.service`):**
+   ```ini
+   [Service]
+   Type=oneshot
+   ExecStart=/usr/bin/topgrade
+   ```
+2. **Timer (`/etc/systemd/system/topgrade.timer`):**
+   ```ini
+   [Timer]
+   OnCalendar=daily
+   Persistent=true
+   [Install]
+   WantedBy=timers.target
+   ```
+3. **Enable:** `sudo systemctl enable --now topgrade.timer`
+
+### Cron Job
+```cron
+0 2 * * * /usr/bin/topgrade
+```
+
+---
+
+## Troubleshooting & Best Practices
+
+* **Sudo Issues:** Run `sudo -v` before `topgrade` to refresh your timestamp and avoid mid-process prompts.
+* **Network Failures:** Refresh mirrors if system updates hang:
+  ```bash
+  sudo pacman-mirrors --fasttrack && sudo pacman -Syy
+  ```
+* **Logs:** Pipe output to a log for auditing:
+  ```bash
+  topgrade | tee ~/topgrade_$(date +%F).log
+  ```
+
+---
+
+## Quick Reference Tables
+
+### Command Options
+| Option | Description |
+| :--- | :--- |
+| `--dry-run` | See what would be updated without executing |
+| `--only <list>` | Limit update to comma-separated components |
+| `--exclude <list>` | Skip specific components |
+| `--cleanup` | Run cleanup tasks after updating |
+
+### Supported Components
+| Component | Description |
+| :--- | :--- |
+| `git` | Pulls latest changes in Git repos |
+| `aur` | Updates Arch User Repository packages |
+| `flatpak` | Updates Flatpak apps and runtimes |
+| `docker` | Pulls new versions of Docker images |
+| `cargo` | Updates Rust crates |
+| `pip` | Updates Python packages |
+
+---
+
+## Resources
+* **GitHub Repository:** [topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade)
+* **Official Wiki:** [Arch Linux Wiki - Topgrade](https://wiki.archlinux.org/title/Topgrade)
