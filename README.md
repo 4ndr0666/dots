@@ -13,7 +13,7 @@ Save the following as `4NDR0DWL-INSTALLER.SH` and execute to run:
 # -----------------------------------------------------------
 
 # CONSTANTS
-dotfilesrepo="https://github.com/4ndr0666/dots.git"
+dotfilesrepo="https://github.com/4ndr0666/dwl-dots.git"
 progsfile="https://raw.githubusercontent.com/4ndr0666/4ndr0site/refs/heads/main/static/progs.csv"
 aurhelper="yay"
 repobranch="master"
