@@ -1,15 +1,21 @@
 #!/bin/sh
-
 # Set as a cron job to check for new RSS entries for newsboat.
-# If newsboat is open, sends it an "R" key to refresh.
+# Wayland migration:
+#   xdotool key --window → newsboat -x reload (works on both X11 and Wayland)
+#   pkill -RTMIN+6 dwmblocks → pkill -SIGUSR1 waybar
 
 /usr/bin/notify-send "📰 Updating RSS feeds..."
 
-pgrep -f newsboat$ && /usr/bin/xdotool key --window "$(/usr/bin/xdotool search --name "^newsboat$")" R && exit
+# If newsboat is already open, send it a reload command via its IPC
+# (no display-server dependency — newsboat's own interface)
+if pgrep -f newsboat$ >/dev/null; then
+	/usr/bin/newsboat -x reload
+	exit 0
+fi
 
 echo 🔃 > /tmp/newsupdate
-pkill -RTMIN+6 "${STATUSBAR:-dwmblocks}"
+pkill -SIGUSR1 waybar 2>/dev/null || true
 /usr/bin/newsboat -x reload
 rm -f /tmp/newsupdate
-pkill -RTMIN+6 "${STATUSBAR:-dwmblocks}"
+pkill -SIGUSR1 waybar 2>/dev/null || true
 /usr/bin/notify-send "📰 RSS feed update complete."

@@ -1,36 +1,53 @@
 #!/bin/sh
+# sysact — system power/session management menu.
+# Wayland migration:
+#   dmenu    → rofi (rofi-lbonn-wayland-git, dual-stack)
+#   slock    → hyprlock
+#   xset dpms force off → hyprctl dispatch dpms off
+#   pidof dwmblocks signal → removed (waybar doesn't use this IPC)
 
-# A dmenu wrapper script for system functions.
-export WM="dwm"
+export WM="dwl"
 case "$(readlink -f /sbin/init)" in
-	*systemd*) ctl='systemctl' ;;
-	*) ctl='loginctl' ;;
+    *systemd*) ctl='systemctl' ;;
+    *) ctl='loginctl' ;;
 esac
 
-wmpid(){ # This function is needed if there are multiple instances of the window manager.
-	tree="$(pstree -ps $$)"
-	tree="${tree#*$WM(}"
-	echo "${tree%%)*}"
+wmpid() {
+    tree="$(pstree -ps $$)"
+    tree="${tree#*$WM(}"
+    echo "${tree%%)*}"
 }
 
-lock(){
-    mpc pause
+lock() {
+    mpc pause 2>/dev/null || true
     pauseallmpv
     wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
-    kill -44 $(pidof dwmblocks)
-    slock
+    # Wayland lock via hyprlock; fall back to slock for X11 sessions
+    if [ -n "$WAYLAND_DISPLAY" ] && command -v hyprlock >/dev/null 2>&1; then
+        hyprlock
+    else
+        slock
+    fi
     wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
-    kill -44 $(pidof dwmblocks)
 }
 
-case "$(printf "🔒 lock\n🚪 leave $WM\n♻️ renew $WM\n🐻 hibernate\n🔃 reboot\n🖥️shutdown\n💤 sleep\n📺 display off" | dmenu -i -p 'Action: ')" in
-	'🔒 lock') lock ;;
-	"🚪 leave $WM") kill -TERM "$(wmpid)" ;;
-	"♻️ renew $WM") kill -HUP "$(wmpid)" ;;
-	'🐻 hibernate') slock $ctl hibernate -i ;;
-	'💤 sleep') slock $ctl suspend -i ;;
-	'🔃 reboot') $ctl reboot -i ;;
-	'🖥️shutdown') $ctl poweroff -i ;;
-	'📺 display off') xset dpms force off ;;
-	*) exit 1 ;;
+dpms_off() {
+    if [ -n "$WAYLAND_DISPLAY" ] && command -v hyprctl >/dev/null 2>&1; then
+        hyprctl dispatch dpms off
+    else
+        xset dpms force off
+    fi
+}
+
+case "$(printf "🔒 lock\n🚪 leave $WM\n♻️ renew $WM\n🐻 hibernate\n🔃 reboot\n🖥️shutdown\n💤 sleep\n📺 display off" | \
+    rofi -dmenu -i -p 'Action: ')" in
+    '🔒 lock')          lock ;;
+    "🚪 leave $WM")     kill -TERM "$(wmpid)" ;;
+    "♻️ renew $WM")     kill -HUP  "$(wmpid)" ;;
+    '🐻 hibernate')     lock; $ctl hibernate -i ;;
+    '💤 sleep')         lock; $ctl suspend -i ;;
+    '🔃 reboot')        $ctl reboot -i ;;
+    '🖥️shutdown')       $ctl poweroff -i ;;
+    '📺 display off')   dpms_off ;;
+    *) exit 1 ;;
 esac
